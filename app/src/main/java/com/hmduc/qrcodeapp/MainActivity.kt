@@ -12,7 +12,6 @@ import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.DecodeCallback
 import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
-import com.google.zxing.Result
 import kotlinx.android.synthetic.main.activity_main.*
 
 private const val CAMERA_REQUEST_CODE= 101
@@ -24,6 +23,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setUpPermission()
+        codeScanner()
+
+    }
+
+    private fun codeScanner() {
         codeScanner = CodeScanner(this, codeScannerView)
         codeScanner.apply {
             camera = CodeScanner.CAMERA_BACK
@@ -36,7 +41,7 @@ class MainActivity : AppCompatActivity() {
 
             decodeCallback = DecodeCallback {
                 runOnUiThread{
-                    text.text = it.text
+                    textView.text = it.text
                 }
             }
 
@@ -57,9 +62,9 @@ class MainActivity : AppCompatActivity() {
         codeScanner.startPreview()
     }
 
-    override fun onRestart() {
+    override fun onPause() {
         codeScanner.releaseResources()
-        super.onRestart()
+        super.onPause()
     }
 
     private fun setUpPermission() {
@@ -82,7 +87,7 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             CAMERA_REQUEST_CODE -> {
                 if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "You need the camera permission to be able to use this App!",Toast.LENGTH_SHORT)
+                    Toast.makeText(this, "You need the camera permission to be able to use this App!",Toast.LENGTH_SHORT).show()
                 }
             }
         }
